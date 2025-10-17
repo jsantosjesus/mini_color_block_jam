@@ -4,22 +4,29 @@ import 'package:flutter/material.dart';
 class BorderComponent extends PositionComponent {
   final int gridSize;
   final double cellSize;
-  final double thickness;
 
-  BorderComponent({
-    required this.gridSize,
-    required this.cellSize,
-    this.thickness = 10,
-  }) : super(size: Vector2(gridSize * cellSize + thickness*2, gridSize * cellSize + thickness*2));
+  BorderComponent({required this.gridSize, required this.cellSize});
 
   @override
   void render(Canvas canvas) {
-    final rect = Rect.fromLTWH(0, 0, size.x, size.y);
-    final paint = Paint()
-      ..color = Colors.black
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = thickness;
+    // Percorre as células do grid
+    for (int index = 0; index < gridSize; index++) {
+      addBorder(canvas: canvas, x: index, y: 0);
+      addBorder(canvas: canvas, x: index, y: gridSize - 1);
+      addBorder(canvas: canvas, x: 0, y: index);
+      addBorder(canvas: canvas, x: gridSize - 1, y: index);
+    }
+    
 
-    canvas.drawRect(rect, paint);
+  }
+
+  void addBorder({required Canvas canvas, required int x, required int y}){
+    final color =  Colors.grey[700]!;
+
+        final paint = Paint()..color = color;
+        final rect = Rect.fromLTWH(x * cellSize, y * cellSize, cellSize, cellSize);
+            final rrect = RRect.fromRectAndRadius(rect, const Radius.circular(0));
+
+        canvas.drawRRect(rrect, paint);
   }
 }

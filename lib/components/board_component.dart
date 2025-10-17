@@ -9,11 +9,9 @@ class BoardComponent extends Component {
 
   @override
   void render(Canvas canvas) {
-    // Percorre as células do grid
-    for (int x = 0; x < gridSize; x++) {
-      for (int y = 0; y < gridSize; y++) {
-        // Alterna as cores, tipo tabuleiro de xadrez
-        // final isEven = (x + y) % 2 == 0;
+    // Percorre as células do grid (excluindo as bordas)
+    for (int x = 1; x < gridSize -1; x++) {
+      for (int y = 1; y < gridSize - 1; y++) {
         final color =  Colors.grey[200]!;
 
         final paint = Paint()..color = color;

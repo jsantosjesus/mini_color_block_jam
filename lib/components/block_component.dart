@@ -7,12 +7,13 @@ class BlockComponent extends PositionComponent {
   int gridX;
   int gridY;
   bool isSelected = false;
-  static const double sizeCell = 80;
+   double sizeCell;
 
   BlockComponent({
     required this.color,
     required this.gridX,
     required this.gridY,
+    required this.sizeCell,
   }) : super(size: Vector2.all(sizeCell));
 
   @override

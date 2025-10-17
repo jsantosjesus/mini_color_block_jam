@@ -5,7 +5,7 @@ class DoorComponent extends PositionComponent {
   final Color color;
   int gridX;
   int gridY;
-  static const double sizeCell = 80;
+  double sizeCell;
 
   final IconData icon; // ícone do Flutter
 
@@ -14,6 +14,7 @@ class DoorComponent extends PositionComponent {
     required this.gridX,
     required this.gridY,
     this.icon = Icons.door_sliding_outlined, // ícone padrão
+    required this.sizeCell,
   }) : super(size: Vector2.all(sizeCell));
 
   @override
