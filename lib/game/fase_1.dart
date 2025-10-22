@@ -6,6 +6,8 @@ import 'package:mini_color_block_jam/components/block_component.dart';
 import 'package:mini_color_block_jam/components/board_component.dart';
 import 'package:mini_color_block_jam/components/border_component.dart';
 import 'package:mini_color_block_jam/components/door_component.dart';
+import 'package:mini_color_block_jam/components/enum_component_shape.dart';
+import 'package:mini_color_block_jam/funcoes/check_block_colision.dart';
 import 'package:mini_color_block_jam/funcoes/check_border_collision.dart';
 import 'package:mini_color_block_jam/funcoes/check_doors_collision.dart';
 
@@ -32,24 +34,49 @@ class ColorBlockJamGame extends FlameGame
 
     // Blocos
     blocks = [
-      BlockComponent(color: Colors.red, gridX: 3, gridY: 1, sizeCell: cellSize),
+      // Bloco quadrado 1x1
       BlockComponent(
-        color: Colors.green,
-        gridX: 2,
-        gridY: 3,
+        color: Colors.red,
+        gridX: 1,
+        gridY: 1,
         sizeCell: cellSize,
+        shape: EnumComponentShape.square,
       ),
+
+      // Bloco retangular 2x1
       BlockComponent(
         color: Colors.blue,
-        gridX: 5,
-        gridY: 3,
+        gridX: 3,
+        gridY: 1,
         sizeCell: cellSize,
+        shape: EnumComponentShape.lShape,
       ),
+
+      // Bloco em "L"
+      // BlockComponent(
+      //   color: Colors.green,
+      //   gridX: 2,
+      //   gridY: 2,
+      //   sizeCell: cellSize,
+      //   shape: EnumComponentShape.tShape,
+      // ),
+
+      // Bloco em "Z"
       BlockComponent(
         color: Colors.yellow,
-        gridX: 5,
-        gridY: 5,
+        gridX: 4,
+        gridY: 4,
         sizeCell: cellSize,
+        shape: EnumComponentShape.zShape,
+      ),
+
+      // Bloco em "T"
+      BlockComponent(
+        color: Colors.green,
+        gridX: 6,
+        gridY: 6,
+        sizeCell: cellSize,
+        shape: EnumComponentShape.tShape,
       ),
     ];
 
@@ -64,24 +91,32 @@ class ColorBlockJamGame extends FlameGame
         gridX: 0,
         gridY: 2,
         sizeCell: cellSize,
+        direction: DoorDirection.left,
+        sizeFactor: 2,
       ), // esquerda
       DoorComponent(
         color: Colors.blue,
         gridX: 9,
         gridY: 3,
         sizeCell: cellSize,
+        direction: DoorDirection.right,
+        sizeFactor: 2,
       ), // direita
       DoorComponent(
         color: Colors.green,
         gridX: 4,
         gridY: 0,
         sizeCell: cellSize,
+        direction: DoorDirection.top,
+        sizeFactor: 3,
       ), // topo
       DoorComponent(
         color: Colors.yellow,
         gridX: 5,
         gridY: 9,
         sizeCell: cellSize,
+        direction: DoorDirection.bottom,
+        sizeFactor: 3,
       ), // fundo
     ];
 
@@ -121,19 +156,21 @@ class ColorBlockJamGame extends FlameGame
       selectedBlock!.size.y,
     );
 
-    if (checkDoorsCollisions(futureRect, selectedBlock!.color, doors)) {
+    if (checkDoorsCollisions(selectedBlock!, doors)) {
+      // Move o bloco para fora do tabuleiro
+      // selectedBlock!.position = Vector2(-100, -100);
+      // Remove o bloco da lista e do jogo
       remove(selectedBlock!);
+      // Remove o bloco da lista
+      blocks.remove(selectedBlock);
       // Desativa seleção
       selectedBlock!.isSelected = false;
       selectedBlock = null;
       return;
     }
 
-    // colisão com outros blocos
-    final collided = blocks.any((block) {
-      if (block == selectedBlock) return false;
-      return futureRect.overlaps(block.toRect());
-    });
+    // colisão por células considerando shape de cada bloco
+    bool collided = checkBlockCollision(clampedX, clampedY, blocks, selectedBlock!);
 
     // Verifica se pode mover (sem colisão e respeitando bordas/portas)
     if (!collided &&
